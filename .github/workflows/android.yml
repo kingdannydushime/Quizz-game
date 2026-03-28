@@ -5,6 +5,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,12 +29,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Make gradlew executable
+      working-directory: ./android
+      run: chmod +x ./gradlew
+
     - name: Sync Capacitor
       run: npx cap sync android
 
     - name: Build Android App (Debug)
       working-directory: ./android
-      run: ./gradlew assembleDebug
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
